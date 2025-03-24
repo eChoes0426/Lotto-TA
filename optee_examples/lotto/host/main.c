@@ -17,7 +17,6 @@ int main(void)
     TEEC_UUID uuid = LOTTO_TA_UUID;
     uint32_t err_origin;
 
-    // Initialize the context to connect to the TEE
     res = TEEC_InitializeContext(NULL, &ctx);
     if (res != TEEC_SUCCESS)
         errx(1, "TEEC_InitializeContext failed with code 0x%x", res);
@@ -27,10 +26,9 @@ int main(void)
     if (res != TEEC_SUCCESS)
         errx(1, "TEEC_OpenSession failed with code 0x%x origin 0x%x",
              res, err_origin);
+              
 
-    // -------------------------------------------------------------------------
-    // Test 1: Generate Keys (public key output)
-    // -------------------------------------------------------------------------
+    // 1: Generate Keys (public key output)
     unsigned char public_key[32] = {0};
 
     memset(&op, 0, sizeof(op));
@@ -51,9 +49,7 @@ int main(void)
     }
     printf("\n");
 
-    // -------------------------------------------------------------------------
-    // Test 2: Generate VRF Randomness and Proof for a message
-    // -------------------------------------------------------------------------
+    // 2: Generate VRF Randomness and Proof for a message
     unsigned char randomness[64] = {0};
     unsigned char proof[80] = {0};
     const char *message = MESSAGE;
@@ -89,9 +85,7 @@ int main(void)
     }
     printf("\n");
 
-    // -------------------------------------------------------------------------
-    // Test 3: Verify VRF Proof and Randomness for the same message
-    // -------------------------------------------------------------------------
+    // 3: Verify VRF Proof and Randomness for the same message
     memset(&op, 0, sizeof(op));
     op.paramTypes = TEEC_PARAM_TYPES(
         TEEC_MEMREF_TEMP_INPUT,  // message
@@ -115,9 +109,7 @@ int main(void)
         printf("VRF verification succeeded.\n");
     }
 
-    // -------------------------------------------------------------------------
     // Cleanup: Close session and finalize context
-    // -------------------------------------------------------------------------
     TEEC_CloseSession(&sess);
     TEEC_FinalizeContext(&ctx);
     return 0;
